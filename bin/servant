@@ -1,0 +1,38 @@
+#! /usr/bin/env ruby
+require 'pp'
+
+require 'rubygems'
+require 'bundler/setup'
+require 'nokogiri'
+require 'log4r'
+
+require 'tempfile'
+
+require 'servant/environment'
+require 'servant/config'
+require 'servant/ci'
+require 'servant/jobcollections'
+require 'servant/mixin/trigger'
+require 'servant/mixin/command'
+require 'servant/mixin/command/config'
+require 'servant/mixin/log_rotator'
+require 'servant/writer/xmlwriter'
+
+require 'base64'
+
+$stdout.sync = true
+$stderr.sync = true
+
+logger = Log4r::Logger.new("servant::bin::servant")
+formatter = Log4r::PatternFormatter.new(
+	:pattern => "[%d] %C [%l]: %M",
+	:date_format => "%Y/%m/%d %H:%M:%S"
+)
+logger.add(Log4r::StdoutOutputter.new($stderr, :formatter => formatter))
+#logger.debug("`servant` invoked:  #{ARGV.inspect}")
+
+opts = {}
+opts[:logger] = logger
+
+env = Servant::Environment.new(opts)
+env.run()
