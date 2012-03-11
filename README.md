@@ -9,6 +9,13 @@ It provides simple, inheritable and powerful configuration file which represents
 gem install servant
 ````
 
+# Requirements
+
+* jenkins (1.4.54 higher)
+* jenkins-cli
+* log4r
+* nokogiri
+
 # Quick Setup
 
 ````
@@ -19,7 +26,9 @@ cat > recipes/first_job.rb <<EOF
 name "first_job"
 description "my first job for jenkins"
 EOF
+
 servant provision
+# this will add first_job job to localhost jenkins and reload.
 ````
 
 # Servant Configurations
