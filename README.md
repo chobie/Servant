@@ -113,7 +113,14 @@ scm_type :git do | repositories |
   ]
 end
 ````
-
 # License
 
 MIT License
+
+# Supported features
+
+* log rotator
+* trigger
+* build_params
+* build step
+* Git
