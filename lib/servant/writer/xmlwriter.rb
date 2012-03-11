@@ -157,12 +157,16 @@ module Servant
                 t = config.fetch(:trigger,nil)
                 if t
                   elm.spec t.get_periodical
+                else
+                  elm.spec nil
                 end
               }
               trigger.send(:"hudson.triggers.SCMTrigger") { |elm|
                 t = config.fetch(:trigger,nil)
                 if t
                   elm.spec t.get_poll
+                else
+                  elm.spec nil
                 end
               }
 
