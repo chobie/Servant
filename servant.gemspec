@@ -4,7 +4,7 @@ require File.expand_path('../lib/servant/version', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.authors       = ["Shuhei Tanuma"]
-  gem.email         = ["chobieeee@gmail.com"]
+  gem.email         = ["chobieee@gmail.com"]
   gem.description   = "Jenkins job management tool"
   gem.summary       = "Servant is a tool for applying jenkins job"
   gem.homepage      = ""
