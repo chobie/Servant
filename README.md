@@ -11,7 +11,7 @@ gem install servant
 
 # Requirements
 
-* jenkins (1.4.54 higher)
+* jenkins (1.440 higher as it supports update-job command)
 * jenkins-cli
 * log4r
 * nokogiri
@@ -37,15 +37,21 @@ Servant requires ServantFile on your project directory.
 
 ````ruby
 Servant::Config.run do | config |
-  config.ci.home = "/home/Jenkins"
-  config.ci.user = 'jenkins'
+  config.ci.url  = "http://localhost:8080"
+  
+  config.ci.user = 'daemon'
+  config.ci.cli  = "/tmp/moe/servant/jenkins-cli.jar"
+  config.ci.home = "/home/Shared/Library/Jenkins"
+  config.ci.cli_options = []
 
   config.ci.jobs :jobs do | jobs |
     jobs.path = "recipes"
-    jobs.add "php-sundown-build"
+
+    Dir::glob("./#{jobs.path}/*.rb").each {|name|
+      jobs.add File.basename(name,".rb")
+    }
   end
-end
-````
+end````
 
 # Commands
 
@@ -61,6 +67,12 @@ servant reload
 name                 "php-sundown-release-build"
 description          "php-sundown is a fast markdown parser & render"
 enabled               true
+
+# abstract means: don't register job
+abstract              false
+
+# extends means: inherit specified servant job 
+extends               "parent_task"
 
 # log_rotator (optional)
 log_rotator.days_to_keep          5
