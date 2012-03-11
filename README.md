@@ -29,6 +29,7 @@ EOF
 
 servant provision
 # this will add first_job job to localhost jenkins and reload.
+
 ````
 
 # Servant Configurations
@@ -39,10 +40,12 @@ Servant requires ServantFile on your project directory.
 Servant::Config.run do | config |
   config.ci.url  = "http://localhost:8080"
   
-  config.ci.user = 'daemon'
   config.ci.cli  = "/tmp/moe/servant/jenkins-cli.jar"
-  config.ci.home = "/home/Shared/Library/Jenkins"
   config.ci.cli_options = []
+
+  # optional (for update config.xml directly)
+  config.ci.user = 'daemon'
+  config.ci.home = "/home/Shared/Library/Jenkins"
 
   config.ci.jobs :jobs do | jobs |
     jobs.path = "recipes"
@@ -51,7 +54,8 @@ Servant::Config.run do | config |
       jobs.add File.basename(name,".rb")
     }
   end
-end````
+end
+````
 
 # Commands
 
