@@ -1,13 +1,13 @@
 module Servant
   class CI
-    attr_accessor :home, :user, :cli, :url, :cli_options
+    attr_accessor :home, :user, :password, :cli, :url
     
     def initialize
       @home = ""
       @user = ""
+      @password = ""
       @cli = ""
       @url = ""
-      @cli_options = []
       @jobs = Servant::JobCollections.new
     end
     

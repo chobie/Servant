@@ -184,7 +184,17 @@ module Servant
               end
             end
             
-            project.publishers nil
+            project.publishers do | pub |
+              if config.fetch(:notification,nil)
+                mail = config.fetch(:notification)
+                pub.send(:"hudson.tasks.Mailer") do |mailer|
+                  mailer.recipients mail.addresses.join " "
+                  mailer.dontNotifyEveryUnstableBuild false
+                  mailer.sendToIndividuals true
+                end
+              end
+            end
+            
             project.buildWrappers nil
           end
 

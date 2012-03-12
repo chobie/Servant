@@ -22,6 +22,7 @@ gem install servant
 mkdir Jobs
 cd Jobs
 servant init
+
 cat > recipes/first_job.rb <<EOF
 name "first_job"
 description "my first job for jenkins"
@@ -34,17 +35,17 @@ servant provision
 
 # Servant Configurations
 
-Servant requires ServantFile on your project directory.
+Servant requires Servantfile on your project directory.
 
 ````ruby
 Servant::Config.run do | config |
   config.ci.url  = "http://localhost:8080"
   
   config.ci.cli  = "/tmp/moe/servant/jenkins-cli.jar"
-  config.ci.cli_options = []
 
   # optional (for update config.xml directly)
   config.ci.user = 'daemon'
+  config.ci.password = '1234'
   config.ci.home = "/home/Shared/Library/Jenkins"
 
   config.ci.jobs :jobs do | jobs |
@@ -112,6 +113,8 @@ scm_type :git do | repositories |
     :branches, "",
   ]
 end
+
+notification.email ["chobieee@gmail.com"]
 ````
 # License
 
@@ -124,3 +127,4 @@ MIT License
 * build_params
 * build step
 * Git
+* notification email

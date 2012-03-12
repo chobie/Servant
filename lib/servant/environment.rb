@@ -27,20 +27,19 @@ module Servant
       
       case command
       when "init"
-        if FileTest.exists?("ServantFile")
-          print "ServantFile exists."
+        if FileTest.exists?("Servantfile")
+          print "Servantfile exists."
           exit(-1)
         end
         
-        file = open("ServantFile","w")
+        file = open("Servantfile","w")
         file.write <<'EOF'
 Servant::Config.run do | config |
   config.ci.url  = "http://localhost:8080"
   
   config.ci.user = 'daemon'
-  config.ci.cli  = "/tmp/moe/servant/jenkins-cli.jar"
+  config.ci.password = ''
   config.ci.home = "/home/Shared/Library/Jenkins"
-  config.ci.cli_options = []
 
   config.ci.jobs :jobs do | jobs |
     jobs.path = "recipes"
@@ -55,7 +54,7 @@ EOF
         
         Dir::mkdir("./recipes")
       when "list"
-        config = eval IO.read(File.join(Dir.pwd, "ServantFile"))
+        config = eval IO.read(File.join(Dir.pwd, "Servantfile"))
         recipes = config.get_recipe
         print "loaded configurations:\n"
         
@@ -63,7 +62,7 @@ EOF
           print "  #{name}\n"
         end
       when "show"
-        config = eval IO.read(File.join(Dir.pwd, "ServantFile"))
+        config = eval IO.read(File.join(Dir.pwd, "Servantfile"))
 
         print "HOME: " + config.ci.home + "\n"
         print "USER: " + config.ci.user + "\n"
@@ -72,7 +71,7 @@ EOF
 
         exit
       when "provision"
-        config = eval IO.read(File.join(Dir.pwd, "ServantFile"))
+        config = eval IO.read(File.join(Dir.pwd, "Servantfile"))
         recipes = config.get_recipe
         recipes.each do |name, cfg|
           @logger.info "processing `#{name}`..."
@@ -82,11 +81,19 @@ EOF
           tmp.write xmldata
           tmp.close()
           
-          `/usr/bin/java -jar #{config.ci.cli} -s #{config.ci.url} get-job #{name} 2>&1 > /dev/null`
-          if $?.exitstatus == 255
-            `/usr/bin/java -jar #{config.ci.cli} -s #{config.ci.url} create-job #{name} < #{tmp.path}`
+          # set password and user
+          if config.ci.user.size && config.ci.password.size
+            auth = "#{config.ci.user}:#{config.ci.password}"
           else
-            `/usr/bin/java -jar #{config.ci.cli} -s #{config.ci.url} update-job #{name} < #{tmp.path}`
+            auth = ""
+          end
+          
+          encoded_name = URI.encode(cfg.fetch(:name))
+          `curl -s -f #{auth} -X GET #{config.ci.url}/job/#{encoded_name}/config.xml 2>&1 > /dev/null`
+          if $?.exitstatus == 22
+            `curl -s #{auth} -f -X POST #{config.ci.url}/createItem?name=#{encoded_name} --data-binary "@#{tmp.path}" -H "Content-Type: text/xml"`
+          else
+            `curl -s #{auth} -f -X POST #{config.ci.url}/job/#{encoded_name}/config.xml --data-binary "@#{tmp.path}" -H "Content-Type: text/xml"`
           end
           
           if $?.exitstatus == 0
@@ -97,8 +104,8 @@ EOF
           
         end
       when "reload"
-        config = eval IO.read(File.join(Dir.pwd, "ServantFile"))
-        system("/usr/bin/java -jar #{config.ci.cli} -s #{config.ci.url} reload-configuration")
+        config = eval IO.read(File.join(Dir.pwd, "Servantfile"))
+        `curl -s #{auth} -f -X GET #{config.ci.url}/reload 2>&1 > /dev/null`
       else
         show_help
       end
