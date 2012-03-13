@@ -2,7 +2,6 @@
 require 'pp'
 
 require 'rubygems'
-require 'bundler/setup'
 require 'nokogiri'
 require 'log4r'
 

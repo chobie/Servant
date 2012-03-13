@@ -106,9 +106,10 @@ module Servant
 
                 git.branches do |branches|
                   branches.send(:"hudson.plugins.git.BranchSpec") do |branch|
-                    branch.name "**"
+                    branch.name git_config.fetch(:branches,"**")
                   end
                 end
+                
                 git.disableSubmodules false
                 git.recursiveSubmodules false
                 git.doGenerateSubmoduleConfigurations false
