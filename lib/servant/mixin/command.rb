@@ -38,6 +38,7 @@ module Servant
         @@configs[name] = @@config
         @@config = {}
       end 
+      
     end
   end
 end

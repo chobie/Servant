@@ -3,6 +3,10 @@ module Servant
     class Notification
       attr_accessor :addresses
       
+      def initialize
+        @addresses = []
+      end
+      
       def has_config
         @addresses.size
       end
