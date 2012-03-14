@@ -4,7 +4,18 @@ module Servant
       extend self
       
       def extends(file)
-        @@config[:extends] = file
+        if @@config.size > 0
+          raise "extends must call at first"
+        end
+        
+        if @@configs.fetch(file, nil)
+          parent = @@configs.fetch(file)
+          
+          @@config = parent.rmerge(@@config)
+          @@config[:abstract] = false
+        else
+          raise "extends: specified file does not find. you have to load before extends."
+        end
       end
       
       def abstract(bool)
@@ -43,7 +54,14 @@ module Servant
       end
       
       def scm_type(specs)
-        repo = Repositories.new
+        if @@config.fetch(:scm, nil) == nil
+          repo = Repositories.new
+          @@config[:scm] = repo
+        else
+          # already cloned
+          repo =  @@config[:scm]
+        end
+        
         yield(repo) if block_given?
         
         @@config[:scm] = repo
@@ -53,12 +71,18 @@ module Servant
       end
       
       class Repositories
+        attr_accessor :repositories
+        
         def initialize
-          @repositories = {}
+          @repositories = []
         end
         
         def fetch(key, default = nil)
           return @repositories.fetch(key, default)
+        end
+        
+        def get(index)
+          @repositories[index]
         end
         
         def add(a)
@@ -68,7 +92,7 @@ module Servant
             tmp[key] = value
           end
           
-          @repositories = tmp
+          @repositories << tmp
         end
         
         private
@@ -115,7 +139,6 @@ module Servant
         end
         
       end
-
     end
   end
 end

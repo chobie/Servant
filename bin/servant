@@ -8,6 +8,7 @@ require 'log4r'
 require 'uri'
 require 'tempfile'
 
+require 'servant/hash'
 require 'servant/environment'
 require 'servant/config'
 require 'servant/ci'

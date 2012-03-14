@@ -35,11 +35,6 @@ module Servant
         elsif cfg.fetch(:enabled,nil) == false
           next
         else
-          if cfg.fetch(:extends,nil)
-            parent = ci_configs.fetch(cfg.fetch(:extends))
-            cfg = parent.merge(cfg)
-            cfg[:abstract] = false
-          end
           recipes[name] = cfg
         end
       end

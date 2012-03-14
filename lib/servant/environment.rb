@@ -91,9 +91,9 @@ EOF
           encoded_name = URI.encode(cfg.fetch(:name))
           `curl -s -f #{auth} -X GET #{config.ci.url}/job/#{encoded_name}/config.xml 2>&1 > /dev/null`
           if $?.exitstatus == 22
-            `curl -s #{auth} -f -X POST #{config.ci.url}/createItem?name=#{encoded_name} --data-binary "@#{tmp.path}" -H "Content-Type: text/xml"`
+            `curl -s #{auth} -f -X POST #{config.ci.url}/createItem?name=#{encoded_name} --data-binary "@#{tmp.path}" -H "Content-Type: text/xml; charset=UTF8"`
           else
-            `curl -s #{auth} -f -X POST #{config.ci.url}/job/#{encoded_name}/config.xml --data-binary "@#{tmp.path}" -H "Content-Type: text/xml"`
+            `curl -s #{auth} -f -X POST #{config.ci.url}/job/#{encoded_name}/config.xml --data-binary "@#{tmp.path}" -H "Content-Type: text/xml; charset=UTF8"`
           end
           
           if $?.exitstatus == 0
